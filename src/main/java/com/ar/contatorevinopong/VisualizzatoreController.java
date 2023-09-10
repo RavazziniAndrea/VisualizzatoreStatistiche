@@ -1,23 +1,19 @@
 package com.ar.contatorevinopong;
 
-import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
-import javafx.util.Duration;
 
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class VisualizzatoreController implements Initializable {
@@ -32,7 +28,6 @@ public class VisualizzatoreController implements Initializable {
     private static final String ID_VBOX_TITOLO = "vbTitolo";
     private static final String ID_VBOX_VALORE = "vbValore";
     private static final String ID_LABEL_TITOLO = "lblTitolo";
-    private static final String ID_LABEL_VALORE = "lblValore";
 
 //    final int PREF_WIDTH = 1920;
 //    final int PREF_HEIGHT = 1080;
@@ -52,8 +47,43 @@ public class VisualizzatoreController implements Initializable {
 
                 rootAnchorPane.getChildren().addAll(gridPaneList);
                 avviaCambioSchermate(config.getDurataSlide(), rootAnchorPane.getScene());
+                avviaCambioValori(rootAnchorPane.getScene());
             }
         });
+    }
+
+    private void avviaCambioValori(Scene scene) {
+        Dati datiVisualizzati = new Dati();
+        GestoreDati gestoreDati = new GestoreDati();
+        gestoreDati.avviaThreadLetturaDati();
+        Thread t = new Thread(()->{
+            while(true){
+                Dati datiLetti = gestoreDati.getDatiVisualizzati();
+                if(!datiVisualizzati.equals(datiLetti)){
+                    datiVisualizzati.setLitriBevuti(datiLetti.getLitriBevuti());
+                    datiVisualizzati.setBirreTotali(datiLetti.getBirreTotali());
+                    datiVisualizzati.setBottiglieVino(datiLetti.getBottiglieVino());
+                    datiVisualizzati.setDrinkTotali(datiLetti.getDrinkTotali());
+                    datiVisualizzati.setChiusuraCasse(datiLetti.getChiusuraCasse());
+
+                    List<Object> valori = datiLetti.getListaValoriOrdinati();
+
+                    Platform.runLater(()->{
+                        for(int i=0;i<config.getStatistiche().size();i++){
+                            Label lbl = (Label) scene.lookup("#"+getIdPreciso(i));
+                            lbl.setText(valori.get(i).toString());
+                        }
+                    });
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        },"thread cambio valori");
+        t.setDaemon(true);
+        t.start();
     }
 
     private void avviaCambioSchermate(int durata, Scene scene) {
@@ -135,13 +165,24 @@ public class VisualizzatoreController implements Initializable {
 
     private Label getLabelValore(String valore, int i) {
         Label lbl = new Label();
-        lbl.setId(ID_LABEL_VALORE+i);
+        lbl.setId(getIdPreciso(i));
         lbl.setAlignment(Pos.CENTER);
         lbl.setFont(getFontValore());
         lbl.setText(valore);
         return lbl;
     }
 
+    private String getIdPreciso(int i) {
+        //Questi saranno in ordine per come sono scritti nella configurazione
+        switch(i){
+            case 0: return "lblLitriBevuti";
+            case 1: return "lblBirreTotali";
+            case 2: return "lblBottiglieVino";
+            case 3: return "lblDrinkTotali";
+            case 4: return "lblChiusuraCasse";
+            default: return "";
+        }
+    }
 
     private Font getFontTitolo(int fontSize) {
         Font font = new Font("System Bold", fontSize);
