@@ -1,5 +1,7 @@
-package com.ar.contatorevinopong;
+package com.ar.visualizzatore;
 
+import com.ar.visualizzatore.config.Config;
+import com.ar.visualizzatore.config.ConfigParser;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -7,20 +9,22 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import static java.lang.System.exit;
+
 public class VisualizzatoreStatistiche extends Application {
 
-    static Configurazione config;
+    static Config config;
 
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(VisualizzatoreController.class.getResource("main-view.fxml"));
 
         try{
-            config = Configurazione.leggiConfigFile();
+            config = ConfigParser.getConfig();
             System.out.println(config.toString());
         } catch (IOException e) {
             System.err.println("Impossibile leggere file config. Abort");
-            System.exit(1);
+            exit(1);
         }
 
         Scene scene = new Scene(fxmlLoader.load(), 1360, 768);
@@ -36,7 +40,7 @@ public class VisualizzatoreStatistiche extends Application {
         launch();
     }
 
-    public static Configurazione getConfig() {
+    public static Config getConfig() {
         return config;
     }
 }

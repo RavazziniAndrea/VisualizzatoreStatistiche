@@ -1,0 +1,25 @@
+{
+  "connessione":{
+    "ip": "10.0.54.42",
+    "user": "barboun",
+    "passwd": "barboun"
+  },
+  "query": [
+    {
+      "index": 0,
+      "statement": ""
+    },  {
+      "index": 1,
+      "statement": ""
+    },  {
+      "index": 2,
+      "statement": ""
+    },  {
+      "index": 3,
+      "statement": ""
+    },  {
+      "index": 4,
+      "statement": ""
+    }
+  ]
+}

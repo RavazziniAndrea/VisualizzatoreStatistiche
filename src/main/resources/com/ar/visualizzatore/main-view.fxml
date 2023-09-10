@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.layout.Pane?>
-<AnchorPane fx:id="rootAnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="1360" prefHeight="768" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ar.contatorevinopong.VisualizzatoreController">
+<AnchorPane fx:id="rootAnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="1360" prefHeight="768" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ar.visualizzatore.VisualizzatoreController">
 <!--   <children>-->
 <!--      <Label fx:id="lblTitle" alignment="CENTER" layoutX="124.0" layoutY="96.0" prefHeight="374.0" prefWidth="1920.0" text="-&#45;&#45;" AnchorPane.bottomAnchor="696.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">-->
 <!--         <font>-->

@@ -1,11 +1,16 @@
-package com.ar.contatorevinopong;
+package com.ar.visualizzatore.dati;
+
+import com.ar.visualizzatore.VisualizzatoreStatistiche;
+import com.ar.visualizzatore.config.Config;
+import javafx.util.Pair;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
-public class Dati {
+public class Dati { //TODO sarà da togliere
     private Integer litriBevuti;
     private Integer birreTotali;
     private Integer drinkTotali;
@@ -16,6 +21,7 @@ public class Dati {
         this.litriBevuti = 0;
         this.birreTotali = 0;
         this.bottiglieVino = 0;
+        this.drinkTotali = 0;
         this.chiusuraCasse = LocalTime.of(1,30,0);
     }
 
@@ -34,13 +40,22 @@ public class Dati {
         this.chiusuraCasse = chiusuraCasse;
     }
 
-    public List<Object> getListaValoriOrdinati(){
-        List<Object> valori = new ArrayList<>();
-        valori.add(litriBevuti);
-        valori.add(birreTotali);
-        valori.add(bottiglieVino);
-        valori.add(drinkTotali);
-        valori.add(chiusuraCasse);
+    public List<Pair<String, Object>> getListaValoriOrdinati(){
+        Config config = VisualizzatoreStatistiche.getConfig();
+        List<DatiStatistica> datiStatistiche = config.getDatiStatistiche();
+        List<Pair<String, Object>> valori = new ArrayList<>();
+
+        valori.add(new Pair<>(datiStatistiche.get(0).getId(), litriBevuti));
+        valori.add(new Pair<>(datiStatistiche.get(1).getId(), birreTotali));
+        valori.add(new Pair<>(datiStatistiche.get(2).getId(), bottiglieVino));
+        valori.add(new Pair<>(datiStatistiche.get(3).getId(), drinkTotali));
+        valori.add(new Pair<>(datiStatistiche.get(4).getId(), chiusuraCasse));
+
+//        valori.add(litriBevuti);
+//        valori.add(birreTotali);
+//        valori.add(bottiglieVino);
+//        valori.add(drinkTotali);
+//        valori.add(chiusuraCasse);
         return valori;
     }
 

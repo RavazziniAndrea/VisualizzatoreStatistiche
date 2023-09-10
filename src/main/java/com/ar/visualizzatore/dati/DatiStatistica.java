@@ -1,0 +1,68 @@
+package com.ar.visualizzatore.dati;
+
+public class DatiStatistica {
+
+    private int index;
+    private String id;
+    private String testo;
+    private String tipo;
+    private int fontSize;
+    private boolean lettoDb;
+
+    public DatiStatistica(int index, String id, String testo, String tipo, int fontSize, boolean lettoDb) {
+        this.index = index;
+        this.id = id;
+        this.testo = testo;
+        this.tipo = tipo;
+        this.fontSize = fontSize;
+        this.lettoDb = lettoDb;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getTesto() {
+        return testo;
+    }
+
+    public void setTesto(String testo) {
+        this.testo = testo;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public int getFontSize() {
+        return fontSize;
+    }
+
+    public void setFontSize(int fontSize) {
+        this.fontSize = fontSize;
+    }
+
+    public boolean isLettoDb() {
+        return lettoDb;
+    }
+
+    public void setLettoDb(boolean lettoDb) {
+        this.lettoDb = lettoDb;
+    }
+}

@@ -1,5 +1,8 @@
-package com.ar.contatorevinopong;
+package com.ar.visualizzatore;
 
+import com.ar.visualizzatore.config.Config;
+import com.ar.visualizzatore.dati.Dati;
+import com.ar.visualizzatore.dati.DatiStatistica;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -8,12 +11,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import javafx.util.Pair;
 
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class VisualizzatoreController implements Initializable {
@@ -22,12 +25,11 @@ public class VisualizzatoreController implements Initializable {
     private AnchorPane rootAnchorPane;
 
     private static final String FONT_PATH = "/font/ClassicMiniBoldItalic.ttf";
-    private static final String FONT_NAME = "ClassicMiniBoldItalic.ttf";
 
-    private static final String ID_GRIDPANE = "gridPane";
-    private static final String ID_VBOX_TITOLO = "vbTitolo";
-    private static final String ID_VBOX_VALORE = "vbValore";
-    private static final String ID_LABEL_TITOLO = "lblTitolo";
+    private static final String ID_GRIDPANE = "gp";
+    private static final String PREFIX_VBOX = "vb";
+    private static final String PREFIX_LABEL_TITOLO = "lblTitolo";
+    private static final String PREFIX_LABEL_VALORE = "lblValore";
 
 //    final int PREF_WIDTH = 1920;
 //    final int PREF_HEIGHT = 1080;
@@ -36,7 +38,7 @@ public class VisualizzatoreController implements Initializable {
 
     List<GridPane> gridPaneList;
 
-    Configurazione config;
+    Config config;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -46,7 +48,7 @@ public class VisualizzatoreController implements Initializable {
                 creaGridPaneList();
 
                 rootAnchorPane.getChildren().addAll(gridPaneList);
-                avviaCambioSchermate(config.getDurataSlide(), rootAnchorPane.getScene());
+                avviaCambioSchermate(config.getDurataSchermata().getDurata(), rootAnchorPane.getScene());
                 avviaCambioValori(rootAnchorPane.getScene());
             }
         });
@@ -58,7 +60,7 @@ public class VisualizzatoreController implements Initializable {
         gestoreDati.avviaThreadLetturaDati();
         Thread t = new Thread(()->{
             while(true){
-                Dati datiLetti = gestoreDati.getDatiVisualizzati();
+                Dati datiLetti = gestoreDati.getDatiLetti();
                 if(!datiVisualizzati.equals(datiLetti)){
                     datiVisualizzati.setLitriBevuti(datiLetti.getLitriBevuti());
                     datiVisualizzati.setBirreTotali(datiLetti.getBirreTotali());
@@ -66,12 +68,13 @@ public class VisualizzatoreController implements Initializable {
                     datiVisualizzati.setDrinkTotali(datiLetti.getDrinkTotali());
                     datiVisualizzati.setChiusuraCasse(datiLetti.getChiusuraCasse());
 
-                    List<Object> valori = datiLetti.getListaValoriOrdinati();
+                    List<Pair<String, Object>> valori = datiLetti.getListaValoriOrdinati();
 
                     Platform.runLater(()->{
-                        for(int i=0;i<config.getStatistiche().size();i++){
-                            Label lbl = (Label) scene.lookup("#"+getIdPreciso(i));
-                            lbl.setText(valori.get(i).toString());
+                        List<DatiStatistica> datiStatistiche = config.getDatiStatistiche();
+                        for(int i=0;i<datiStatistiche.size();i++){
+                            Label lbl = (Label) scene.lookup("#"+PREFIX_LABEL_VALORE+datiStatistiche.get(i).getId());
+                            lbl.setText(valori.get(i).getValue().toString());
                         }
                     });
                 }
@@ -89,7 +92,7 @@ public class VisualizzatoreController implements Initializable {
     private void avviaCambioSchermate(int durata, Scene scene) {
         Thread t = new Thread(()->{
             for(int i=0;;i++){
-                if(i>=config.getStatistiche().size()) i=0;
+                if(i>=config.getDatiStatistiche().size()) i=0;
                 int id = i;
                 try {
                     Thread.sleep(durata);
@@ -99,8 +102,8 @@ public class VisualizzatoreController implements Initializable {
                 Platform.runLater(()->{
                     GridPane gpHide;
                     GridPane gpShow;
-                    if(id == config.getStatistiche().size()-1){
-                        gpHide = (GridPane) scene.lookup("#" + ID_GRIDPANE + (config.getStatistiche().size()-1));
+                    if(id == config.getDatiStatistiche().size()-1){
+                        gpHide = (GridPane) scene.lookup("#" + ID_GRIDPANE + (config.getDatiStatistiche().size()-1));
                         gpShow = (GridPane) scene.lookup("#" + ID_GRIDPANE + 0);
                     } else {
                         gpHide = (GridPane) scene.lookup("#" + ID_GRIDPANE + id);
@@ -116,26 +119,25 @@ public class VisualizzatoreController implements Initializable {
     }
 
     private void creaGridPaneList() {
-        List<String> statistiche = config.getStatistiche();
-        List<Integer> statisticheFont = config.getStatisticheFont();
-
+        List<DatiStatistica> datiStatistiche = config.getDatiStatistiche();
 
         gridPaneList = new ArrayList<>();
-        for(int i=0;i<statistiche.size();i++){
+        for(int i=0;i<datiStatistiche.size();i++){
             GridPane gp = new GridPane();
             gp.setId(ID_GRIDPANE+i);
             gp.setPrefSize(PREF_WIDTH, PREF_HEIGHT);
-            Label lblTitolo = getLabelTitolo(statistiche.get(i), statisticheFont.get(i), i);
+
+            Label lblTitolo = getLabelTitolo(datiStatistiche.get(i));
             VBox vbTitolo = new VBox(lblTitolo);
             vbTitolo.setAlignment(Pos.CENTER);
-            vbTitolo.setId(ID_VBOX_TITOLO+i);
+            vbTitolo.setId(PREFIX_VBOX+i);
             RowConstraints constraintTitolo = new RowConstraints();
             constraintTitolo.setPercentHeight(40);
 
-            Label lblValore = getLabelValore("---", i); //TODO cambiare il valore con i dati veri
+            Label lblValore = getLabelValore(datiStatistiche.get(i)); //TODO cambiare il valore con i dati veri
             VBox vbValore = new VBox(lblValore);
             vbValore.setAlignment(Pos.CENTER);
-            vbValore.setId(ID_VBOX_VALORE+i);
+            vbValore.setId(PREFIX_VBOX+i);
             RowConstraints constraintValore = new RowConstraints();
             constraintValore.setPercentHeight(60);
 
@@ -154,41 +156,30 @@ public class VisualizzatoreController implements Initializable {
         }
     }
 
-    private Label getLabelTitolo(String titolo, Integer fontSize, int i) {
+    private Label getLabelTitolo(DatiStatistica datiStatistica) {
         Label lbl = new Label();
-        lbl.setId(ID_LABEL_TITOLO+i);
+        lbl.setId(PREFIX_LABEL_TITOLO+datiStatistica.getId());
         lbl.setAlignment(Pos.CENTER);
-        lbl.setFont(getFontTitolo(fontSize));
-        lbl.setText(titolo);
+        lbl.setFont(getFontTitolo(datiStatistica.getFontSize()));
+        lbl.setText(datiStatistica.getTesto());
         return lbl;
     }
 
-    private Label getLabelValore(String valore, int i) {
+    private Label getLabelValore(DatiStatistica datiStatistica) {
         Label lbl = new Label();
-        lbl.setId(getIdPreciso(i));
+        lbl.setId(PREFIX_LABEL_VALORE+datiStatistica.getId());
         lbl.setAlignment(Pos.CENTER);
-        lbl.setFont(getFontValore());
-        lbl.setText(valore);
+        lbl.setFont(getFont7Segmenti());
+        lbl.setText("---");
         return lbl;
     }
 
-    private String getIdPreciso(int i) {
-        //Questi saranno in ordine per come sono scritti nella configurazione
-        switch(i){
-            case 0: return "lblLitriBevuti";
-            case 1: return "lblBirreTotali";
-            case 2: return "lblBottiglieVino";
-            case 3: return "lblDrinkTotali";
-            case 4: return "lblChiusuraCasse";
-            default: return "";
-        }
-    }
 
     private Font getFontTitolo(int fontSize) {
         Font font = new Font("System Bold", fontSize);
         return font;
     }
-    private Font getFontValore() {
+    private Font getFont7Segmenti() {
 
         InputStream is = VisualizzatoreController.class.getResourceAsStream(FONT_PATH);
         Font font = Font.loadFont(is, 300);
