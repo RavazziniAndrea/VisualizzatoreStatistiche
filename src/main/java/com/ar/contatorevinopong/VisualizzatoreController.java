@@ -27,12 +27,12 @@ public class VisualizzatoreController implements Initializable {
 
     private static final String FONT_PATH = "/font/ClassicMiniBoldItalic.ttf";
     private static final String FONT_NAME = "ClassicMiniBoldItalic.ttf";
-//
-//    @FXML
-//    private Label lblTitle;
-//
-//    @FXML
-//    private Label lblValue;
+
+    private static final String ID_GRIDPANE = "gridPane";
+    private static final String ID_VBOX_TITOLO = "vbTitolo";
+    private static final String ID_VBOX_VALORE = "vbValore";
+    private static final String ID_LABEL_TITOLO = "lblTitolo";
+    private static final String ID_LABEL_VALORE = "lblValore";
 
 //    final int PREF_WIDTH = 1920;
 //    final int PREF_HEIGHT = 1080;
@@ -51,10 +51,38 @@ public class VisualizzatoreController implements Initializable {
                 creaGridPaneList();
 
                 rootAnchorPane.getChildren().addAll(gridPaneList);
+                avviaCambioSchermate(config.getDurataSlide(), rootAnchorPane.getScene());
             }
         });
+    }
 
-
+    private void avviaCambioSchermate(int durata, Scene scene) {
+        Thread t = new Thread(()->{
+            for(int i=0;;i++){
+                if(i>=config.getStatistiche().size()) i=0;
+                int id = i;
+                try {
+                    Thread.sleep(durata);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Platform.runLater(()->{
+                    GridPane gpHide;
+                    GridPane gpShow;
+                    if(id == config.getStatistiche().size()-1){
+                        gpHide = (GridPane) scene.lookup("#" + ID_GRIDPANE + (config.getStatistiche().size()-1));
+                        gpShow = (GridPane) scene.lookup("#" + ID_GRIDPANE + 0);
+                    } else {
+                        gpHide = (GridPane) scene.lookup("#" + ID_GRIDPANE + id);
+                        gpShow = (GridPane) scene.lookup("#" + ID_GRIDPANE + (id+1));
+                    }
+                    gpHide.setVisible(false);
+                    gpShow.setVisible(true);
+                });
+            }
+        },"thread cambio schermate");
+        t.setDaemon(true);
+        t.start();
     }
 
     private void creaGridPaneList() {
@@ -65,18 +93,19 @@ public class VisualizzatoreController implements Initializable {
         gridPaneList = new ArrayList<>();
         for(int i=0;i<statistiche.size();i++){
             GridPane gp = new GridPane();
+            gp.setId(ID_GRIDPANE+i);
             gp.setPrefSize(PREF_WIDTH, PREF_HEIGHT);
             Label lblTitolo = getLabelTitolo(statistiche.get(i), statisticheFont.get(i), i);
             VBox vbTitolo = new VBox(lblTitolo);
             vbTitolo.setAlignment(Pos.CENTER);
-            vbTitolo.setId("vbTitolo"+i);
+            vbTitolo.setId(ID_VBOX_TITOLO+i);
             RowConstraints constraintTitolo = new RowConstraints();
             constraintTitolo.setPercentHeight(40);
 
-            Label lblValore = getLabelValore("02345", i); //TODO cambiare il valore con i dati veri
+            Label lblValore = getLabelValore("---", i); //TODO cambiare il valore con i dati veri
             VBox vbValore = new VBox(lblValore);
             vbValore.setAlignment(Pos.CENTER);
-            vbValore.setId("vbValore"+i);
+            vbValore.setId(ID_VBOX_VALORE+i);
             RowConstraints constraintValore = new RowConstraints();
             constraintValore.setPercentHeight(60);
 
@@ -87,23 +116,17 @@ public class VisualizzatoreController implements Initializable {
             gp.add(vbTitolo, 0,0);
             gp.add(vbValore, 0,1);
 
-            if(i!=4){
-                gp.setLayoutX(PREF_WIDTH); //Trasla tutti oltre lo schermo visibile
+            if(i!=0){
+//                gp.setLayoutX(PREF_WIDTH); //Trasla tutti oltre lo schermo visibile
+                gp.setVisible(false);
             }
             gridPaneList.add(gp);
         }
     }
 
-    /*
-          <Label fx:id="lblTitle" alignment="CENTER" layoutX="124.0" layoutY="96.0" prefHeight="342.0" prefWidth="1673.0" text="---" AnchorPane.bottomAnchor="572.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
-             <font>
-                <Font name="System Bold" size="350.0" />
-             </font>
-          </Label>
-    */
     private Label getLabelTitolo(String titolo, Integer fontSize, int i) {
         Label lbl = new Label();
-        lbl.setId("lblTitolo"+i);
+        lbl.setId(ID_LABEL_TITOLO+i);
         lbl.setAlignment(Pos.CENTER);
         lbl.setFont(getFontTitolo(fontSize));
         lbl.setText(titolo);
@@ -112,7 +135,7 @@ public class VisualizzatoreController implements Initializable {
 
     private Label getLabelValore(String valore, int i) {
         Label lbl = new Label();
-        lbl.setId("lblValore"+i);
+        lbl.setId(ID_LABEL_VALORE+i);
         lbl.setAlignment(Pos.CENTER);
         lbl.setFont(getFontValore());
         lbl.setText(valore);
@@ -135,10 +158,4 @@ public class VisualizzatoreController implements Initializable {
         return font;
     }
 
-    private AnchorPane getAnchorPane(int i) {
-        AnchorPane ap = new AnchorPane();
-        ap.setPrefSize(PREF_WIDTH,PREF_HEIGHT);
-        ap.setId("anchorPane"+i);
-        return ap;
-    }
 }
