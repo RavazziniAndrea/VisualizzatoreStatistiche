@@ -4,14 +4,17 @@ import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +24,9 @@ public class VisualizzatoreController implements Initializable {
 
     @FXML
     private AnchorPane rootAnchorPane;
+
+    private static final String FONT_PATH = "/font/ClassicMiniBoldItalic.ttf";
+    private static final String FONT_NAME = "ClassicMiniBoldItalic.ttf";
 //
 //    @FXML
 //    private Label lblTitle;
@@ -28,10 +34,12 @@ public class VisualizzatoreController implements Initializable {
 //    @FXML
 //    private Label lblValue;
 
-    final int PREF_WIDTH = 1920;
-    final int PREF_HEIGHT = 1080;
+//    final int PREF_WIDTH = 1920;
+//    final int PREF_HEIGHT = 1080;
+    final int PREF_WIDTH = 1360;
+    final int PREF_HEIGHT = 768;
 
-    List<AnchorPane> anchorPaneList;
+    List<GridPane> gridPaneList;
 
     Configurazione config;
 
@@ -40,56 +48,90 @@ public class VisualizzatoreController implements Initializable {
         rootAnchorPane.sceneProperty().addListener((observable, oldScene, newScene) -> {
             if (newScene != null) {
                 config = VisualizzatoreStatistiche.getConfig();
-                creaAnchorPaneList(config.getStatistiche());
+                creaGridPaneList();
 
-                rootAnchorPane.getChildren().addAll(anchorPaneList);
+                rootAnchorPane.getChildren().addAll(gridPaneList);
             }
         });
 
 
     }
 
-    private void creaAnchorPaneList(List<String> statistiche) {
-        anchorPaneList = new ArrayList<>();
-        for(int i=0;i<statistiche.size();i++){
-            AnchorPane ap = getAnchorPane(i);
-            Label titolo = getLabelTitolo(statistiche.get(i), i);
-            ap.getChildren().add(titolo);
-            AnchorPane.setTopAnchor(titolo, 10.0);
-            AnchorPane.setBottomAnchor(titolo, 572.0);
-            AnchorPane.setLeftAnchor(titolo, 0.0);
-            AnchorPane.setRightAnchor(titolo, 0.0);
-            if(i!=0){
-                ap.setLayoutX(5000);
-            }
-            anchorPaneList.add(ap);
-        }
+    private void creaGridPaneList() {
+        List<String> statistiche = config.getStatistiche();
+        List<Integer> statisticheFont = config.getStatisticheFont();
 
+
+        gridPaneList = new ArrayList<>();
+        for(int i=0;i<statistiche.size();i++){
+            GridPane gp = new GridPane();
+            gp.setPrefSize(PREF_WIDTH, PREF_HEIGHT);
+            Label lblTitolo = getLabelTitolo(statistiche.get(i), statisticheFont.get(i), i);
+            VBox vbTitolo = new VBox(lblTitolo);
+            vbTitolo.setAlignment(Pos.CENTER);
+            vbTitolo.setId("vbTitolo"+i);
+            RowConstraints constraintTitolo = new RowConstraints();
+            constraintTitolo.setPercentHeight(40);
+
+            Label lblValore = getLabelValore("02345", i); //TODO cambiare il valore con i dati veri
+            VBox vbValore = new VBox(lblValore);
+            vbValore.setAlignment(Pos.CENTER);
+            vbValore.setId("vbValore"+i);
+            RowConstraints constraintValore = new RowConstraints();
+            constraintValore.setPercentHeight(60);
+
+            ColumnConstraints columnConstraint = new ColumnConstraints();
+            columnConstraint.setPercentWidth(100);
+            gp.getRowConstraints().addAll(constraintTitolo, constraintValore);
+            gp.getColumnConstraints().addAll(columnConstraint);
+            gp.add(vbTitolo, 0,0);
+            gp.add(vbValore, 0,1);
+
+            if(i!=4){
+                gp.setLayoutX(PREF_WIDTH); //Trasla tutti oltre lo schermo visibile
+            }
+            gridPaneList.add(gp);
+        }
     }
 
-/*
-      <Label fx:id="lblTitle" alignment="CENTER" layoutX="124.0" layoutY="96.0" prefHeight="342.0" prefWidth="1673.0" text="---" AnchorPane.bottomAnchor="572.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
-         <font>
-            <Font name="System Bold" size="350.0" />
-         </font>
-      </Label>
-*/
-    private Label getLabelTitolo(String titolo, int i) {
+    /*
+          <Label fx:id="lblTitle" alignment="CENTER" layoutX="124.0" layoutY="96.0" prefHeight="342.0" prefWidth="1673.0" text="---" AnchorPane.bottomAnchor="572.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
+             <font>
+                <Font name="System Bold" size="350.0" />
+             </font>
+          </Label>
+    */
+    private Label getLabelTitolo(String titolo, Integer fontSize, int i) {
         Label lbl = new Label();
         lbl.setId("lblTitolo"+i);
         lbl.setAlignment(Pos.CENTER);
-//        lbl.setPrefSize(PREF_WIDTH, 720);//Non serve perchè l'anchor lo tira come vuole
-        lbl.setFont(getFontTitolo());
+        lbl.setFont(getFontTitolo(fontSize));
         lbl.setText(titolo);
         return lbl;
     }
 
-    private Font getFontTitolo() {
-        Font font = new Font("System Bold", 50);
+    private Label getLabelValore(String valore, int i) {
+        Label lbl = new Label();
+        lbl.setId("lblValore"+i);
+        lbl.setAlignment(Pos.CENTER);
+        lbl.setFont(getFontValore());
+        lbl.setText(valore);
+        return lbl;
+    }
+
+
+    private Font getFontTitolo(int fontSize) {
+        Font font = new Font("System Bold", fontSize);
         return font;
     }
     private Font getFontValore() {
-        Font font = new Font("System Bold", 500);//TODO Cambiare con 7segmenti
+
+        InputStream is = VisualizzatoreController.class.getResourceAsStream(FONT_PATH);
+        Font font = Font.loadFont(is, 300);
+        if(font == null){
+            System.err.println("Font non trovato, carico standard");
+            font = new Font("System Bold", 400);
+        }
         return font;
     }
 

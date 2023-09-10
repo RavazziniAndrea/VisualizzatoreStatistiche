@@ -23,8 +23,8 @@ public class VisualizzatoreStatistiche extends Application {
             System.exit(1);
         }
 
-//        Scene scene = new Scene(fxmlLoader.load(), 1360, 768);
-        Scene scene = new Scene(fxmlLoader.load(), 1920, 1080);
+        Scene scene = new Scene(fxmlLoader.load(), 1360, 768);
+//        Scene scene = new Scene(fxmlLoader.load(), 1920, 1080);
 
         stage.setTitle("Statistiche");
         stage.setScene(scene);
