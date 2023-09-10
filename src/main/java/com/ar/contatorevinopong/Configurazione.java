@@ -14,12 +14,10 @@ public class Configurazione {
     public static final String CONFIG_PATH = "config.properties";
 
     private List<String> statistiche;
-    private LocalTime time;
     private int durataSlide;
 
-    public Configurazione(List<String> statistiche, LocalTime time, int durataSlide) {
+    public Configurazione(List<String> statistiche, int durataSlide) {
         this.statistiche = statistiche;
-        this.time = time;
         this.durataSlide = durataSlide;
     }
 
@@ -29,10 +27,7 @@ public class Configurazione {
         List<String> statistiche = Arrays.asList(properties.getProperty("statistiche").split(","));
         try{
             int durata = Integer.parseInt(properties.getProperty("durata_slide_ms"));
-            int ora     = Integer.parseInt(properties.getProperty("ora_chiusura_casse"));
-            int minuti  = Integer.parseInt(properties.getProperty("minuti_chiusura_casse"));
-            LocalTime tempo = LocalTime.of(ora,minuti);
-            return new Configurazione(statistiche, tempo, durata);
+            return new Configurazione(statistiche, durata);
         } catch (NumberFormatException e){
             throw new LetturaConfigException(e);
         }
@@ -44,14 +39,6 @@ public class Configurazione {
 
     public void setStatistiche(List<String> statistiche) {
         this.statistiche = statistiche;
-    }
-
-    public LocalTime getTempo() {
-        return time;
-    }
-
-    public void setTempo(LocalTime time) {
-        this.time = time;
     }
 
     public int getDurataSlide() {
@@ -66,7 +53,6 @@ public class Configurazione {
     public String toString() {
         return "Configurazione{" +
                 "statistiche=" + statistiche +
-                ", time=" + time +
                 ", durataSlide=" + durataSlide +
                 '}';
     }
