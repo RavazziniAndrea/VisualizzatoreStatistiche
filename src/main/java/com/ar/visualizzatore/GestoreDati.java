@@ -13,6 +13,14 @@ public class GestoreDati {
 
     public void avviaThreadLetturaDati(){
         Thread t = new Thread(()->{
+
+
+            /*
+                TODO
+                Devo lavorare da qui per rendere accessibili le query ed estrarre i dati
+             */
+
+
             for(int i=0;i<1000;i++){
                 if(i>=999) i=0;
                 datiLetti.setLitriBevuti(i);

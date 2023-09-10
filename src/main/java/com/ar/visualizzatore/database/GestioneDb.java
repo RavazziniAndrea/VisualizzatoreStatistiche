@@ -7,64 +7,38 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class GestioneDb {
 
-    private static final String DATABASE_FILE_NAME = "database.json";
-    private static String json;
-    private static JSONObject obj;
+    private Map<String, String> connMap;
+    private List<Pair<Integer, String>> queryList;
 
-    public static List<Pair<String, String>> getDatabaseConnessioneConfig() throws IOException {
-        checkSeCaricareJson();
-
-        List<Pair<String, String>> connectionConfig = new ArrayList<>();
-        JSONObject objConn = obj.getJSONObject("connessione");
-        connectionConfig.add(new Pair<>("ip", objConn.getString("ip")));
-        connectionConfig.add(new Pair<>("user", objConn.getString("user")));
-        connectionConfig.add(new Pair<>("passwd", objConn.getString("passwd")));
-
-        return connectionConfig;
-    }
-
-    public static List<Pair<Integer, String>> getQueryList() throws IOException {
-        checkSeCaricareJson();
-
-        List<Pair<Integer, String>> queryList = new ArrayList<>();
-        JSONArray arrQuery = obj.getJSONArray("query");
-        for(int i=0;i<arrQuery.length();i++){
-            JSONObject objQuery = arrQuery.getJSONObject(i);
-            queryList.add(new Pair<>(
-                    objQuery.getInt("index"),
-                    objQuery.getString("statement"))
-            );
-        }
-        return queryList;
-    }
-
-    private static void checkSeCaricareJson() throws IOException {
-        if(json == null || json.isEmpty() || obj == null){
-            caricaJsonDaFile();
-            obj = new JSONObject(json);
-        }
-    }
-
-    private static void caricaJsonDaFile() throws IOException {
-        try {
-            json = new String(ConfigParser.class.getResourceAsStream(DATABASE_FILE_NAME).readAllBytes());
-        } catch (NullPointerException e){
+    public Object eseguiQuery(){
+        try(Connection c = getConnessione()) {
+            try(Statement st = c.createStatement()){
+                for(Pair p : queryList){
+                    try(ResultSet rs = st.executeQuery(String.valueOf(p.getValue()))){
+                        while(rs.next()){
+//                            conto e calcolo
+                        }
+                    }
+                }
+            }
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
-            throw new IOException(e);
         }
+
+        return null;
     }
 
-    private Connection getConnessione(){
-        Connection conn;
+    private Connection getConnessione() throws IOException, SQLException {
+        Map<String, String> connMap = DbConfig.getDatabaseConnessioneConfig();
+        List<Pair<Integer, String>> queryList = DbConfig.getQueryList();
 
-        conn= DriverManager.getConnection()
-
+        return DriverManager.getConnection("jdbc:postgresql://"+connMap.get("ip"), connMap.get("user"), connMap.get("passwd"));
     }
 }
