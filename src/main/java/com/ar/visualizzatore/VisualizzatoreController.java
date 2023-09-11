@@ -18,6 +18,10 @@ import javafx.util.Pair;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.sql.Time;
+import java.time.LocalTime;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -73,11 +77,11 @@ public class VisualizzatoreController implements Initializable {
                     datiVisualizzati.setBirreTotali(datiLetti.getBirreTotali());
                     datiVisualizzati.setBottiglieVino(datiLetti.getBottiglieVino());
                     datiVisualizzati.setDrinkTotali(datiLetti.getDrinkTotali());
-                    datiVisualizzati.setChiusuraCasse(datiLetti.getChiusuraCasse());
+                    //TODO allora.. per rendere l'idea del countdown deve lampeggiare i : e aggiornarsi al secondo
+                    datiVisualizzati.setChiusuraCasse(contaTempoRimanente(datiLetti.getChiusuraCasse()));
+//                    contaTempoRimanente(datiLetti.getChiusuraCasse());
 
-//                    List<Pair<String, Object>> valori = datiLetti.getListaValoriOrdinati();
-
-                    Map<Integer, Object> valori = datiLetti.getMappaValori();
+                    Map<Integer, Object> valori = datiVisualizzati.getMappaValori();
 
                     Platform.runLater(()->{
                         List<DatiStatistica> datiStatistiche = config.getDatiStatistiche();
@@ -101,6 +105,14 @@ public class VisualizzatoreController implements Initializable {
         },"thread cambio valori");
         t.setDaemon(true);
         t.start();
+    }
+
+    private LocalTime contaTempoRimanente(LocalTime chiusuraCasse) { //TODO non si può vedere sto metodo, refactor
+        int secondi = (int) (LocalTime.now().until(chiusuraCasse, ChronoUnit.SECONDS) % 60);
+        int minuti = (int) (LocalTime.now().until(chiusuraCasse, ChronoUnit.SECONDS) / 60);
+        int ore = (int) minuti/60;
+        minuti = minuti % 60;
+        return LocalTime.of(ore, minuti, secondi);
     }
 
     private void avviaCambioSchermate(int durata, Scene scene) {
@@ -194,10 +206,10 @@ public class VisualizzatoreController implements Initializable {
         Font font = new Font("Monospaced Bold", fontSize);
         return font;
     }
-    private Font getFont7Segmenti(int fonSize) {
+    private Font getFont7Segmenti(int fontSize) {
 
         InputStream is = VisualizzatoreController.class.getResourceAsStream(FONT_PATH);
-        Font font = Font.loadFont(is, 300);
+        Font font = Font.loadFont(is, fontSize);
         if(font == null){
             System.err.println("Font non trovato, carico standard");
             font = new Font("System Bold", 400);

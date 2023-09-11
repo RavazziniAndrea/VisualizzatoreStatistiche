@@ -32,7 +32,7 @@ public class GestioneDati {
     }
 
     private synchronized void elaboraDati(List<RecordDb> records) {
-        datiLetti.svuotaCampi();
+        datiLetti = new DatiTotali();
         for(RecordDb record : records){
             int qta = record.getQta();
             String tipo = record.getTipo();

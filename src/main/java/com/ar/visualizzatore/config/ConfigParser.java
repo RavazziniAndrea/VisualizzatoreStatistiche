@@ -1,5 +1,6 @@
 package com.ar.visualizzatore.config;
 
+import com.ar.visualizzatore.dati.NonLettiDb;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -26,7 +27,7 @@ public class ConfigParser {
         JSONArray arr = obj.getJSONArray("statistiche");
         for(int i=0;i<arr.length();i++){
             JSONObject objStatistica = arr.getJSONObject(i);
-            statistiche.add(new DatiStatistica(
+            DatiStatistica dato = new DatiStatistica(
                     objStatistica.getInt("index"),
                     objStatistica.getString("id"),
                     objStatistica.getString("testo"),
@@ -34,7 +35,11 @@ public class ConfigParser {
                     objStatistica.getInt("font_size"),
                     objStatistica.getInt("font_size_valore"),
                     objStatistica.getBoolean("letto_db")
-            ));
+            );
+            if(!dato.isLettoDb()){
+                NonLettiDb.getNonLettiDbMap().put(dato.getId(), objStatistica.getString("valore"));
+            }
+            statistiche.add(dato);
         }
         return statistiche;
     }

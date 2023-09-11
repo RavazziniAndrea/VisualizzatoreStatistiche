@@ -38,11 +38,12 @@
       "testo": "CHIUSURA CASSE",
       "tipo": "Long",
       "font_size": 170,
-      "font_size_valore": 300,
-      "letto_db": true
+      "font_size_valore": 200,
+      "letto_db": false,
+      "valore": "02:29:01"
     }
   ],
-  "durata_schermata_ms": 1000,
+  "durata_schermata_ms": 3000,
   "dimensioni": {
     "pref_width": 1360,
     "pref_height": 768
