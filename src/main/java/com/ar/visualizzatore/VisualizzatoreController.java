@@ -2,8 +2,9 @@ package com.ar.visualizzatore;
 
 import com.ar.visualizzatore.config.Config;
 import com.ar.visualizzatore.dati.DatiTotali;
-import com.ar.visualizzatore.dati.DatiStatistica;
-import com.ar.visualizzatore.dati.GestoreDati;
+import com.ar.visualizzatore.config.DatiStatistica;
+import com.ar.visualizzatore.dati.GestioneDati;
+import com.ar.visualizzatore.gui.Colore;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -11,15 +12,15 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 import javafx.util.Pair;
 
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class VisualizzatoreController implements Initializable {
@@ -36,8 +37,8 @@ public class VisualizzatoreController implements Initializable {
 
 //    final int PREF_WIDTH = 1920;
 //    final int PREF_HEIGHT = 1080;
-    final int PREF_WIDTH = 1360;
-    final int PREF_HEIGHT = 768;
+    int PREF_WIDTH;
+    int PREF_HEIGHT;
 
     List<GridPane> gridPaneList;
 
@@ -45,9 +46,11 @@ public class VisualizzatoreController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         rootAnchorPane.sceneProperty().addListener((observable, oldScene, newScene) -> {
             if (newScene != null) {
                 config = VisualizzatoreStatistiche.getConfig();
+                setDimensioni();
                 creaGridPaneList();
 
                 rootAnchorPane.getChildren().addAll(gridPaneList);
@@ -59,9 +62,10 @@ public class VisualizzatoreController implements Initializable {
 
     private void avviaCambioValori(Scene scene) {
         DatiTotali datiVisualizzati = new DatiTotali();
-        GestoreDati gestoreDati = new GestoreDati();
+        GestioneDati gestoreDati = new GestioneDati();
         gestoreDati.avviaThreadLetturaDati();
         Thread t = new Thread(()->{
+            Colore colore = new Colore();
             while(true){
                 DatiTotali datiLetti = gestoreDati.getDatiLetti();
                 if(datiLetti != null && !datiVisualizzati.equals(datiLetti)){
@@ -71,13 +75,20 @@ public class VisualizzatoreController implements Initializable {
                     datiVisualizzati.setDrinkTotali(datiLetti.getDrinkTotali());
                     datiVisualizzati.setChiusuraCasse(datiLetti.getChiusuraCasse());
 
-                    List<Pair<String, Object>> valori = datiLetti.getListaValoriOrdinati();
+//                    List<Pair<String, Object>> valori = datiLetti.getListaValoriOrdinati();
+
+                    Map<Integer, Object> valori = datiLetti.getMappaValori();
 
                     Platform.runLater(()->{
                         List<DatiStatistica> datiStatistiche = config.getDatiStatistiche();
+                        colore.cambiaColore();
                         for(int i=0;i<datiStatistiche.size();i++){
                             Label lbl = (Label) scene.lookup("#"+PREFIX_LABEL_VALORE+datiStatistiche.get(i).getId());
-                            lbl.setText(valori.get(i).getValue().toString());
+                            Label lblTitolo = (Label) scene.lookup("#"+PREFIX_LABEL_TITOLO+datiStatistiche.get(i).getId());
+//                            lbl.setText(valori.get(i).getValue().toString());
+                            lbl.setText(valori.get(i).toString());
+                            lbl.setTextFill(Color.rgb(colore.getR(),colore.getG(),colore.getB()));
+                            lblTitolo.setTextFill(Color.rgb(colore.getR(),colore.getG(),colore.getB()));
                         }
                     });
                 }
@@ -129,6 +140,7 @@ public class VisualizzatoreController implements Initializable {
             GridPane gp = new GridPane();
             gp.setId(ID_GRIDPANE+i);
             gp.setPrefSize(PREF_WIDTH, PREF_HEIGHT);
+            gp.setStyle("-fx-background-color: #000000");
 
             Label lblTitolo = getLabelTitolo(datiStatistiche.get(i));
             VBox vbTitolo = new VBox(lblTitolo);
@@ -137,7 +149,7 @@ public class VisualizzatoreController implements Initializable {
             RowConstraints constraintTitolo = new RowConstraints();
             constraintTitolo.setPercentHeight(40);
 
-            Label lblValore = getLabelValore(datiStatistiche.get(i)); //TODO cambiare il valore con i dati veri
+            Label lblValore = getLabelValore(datiStatistiche.get(i));
             VBox vbValore = new VBox(lblValore);
             vbValore.setAlignment(Pos.CENTER);
             vbValore.setId(PREFIX_VBOX+i);
@@ -152,7 +164,6 @@ public class VisualizzatoreController implements Initializable {
             gp.add(vbValore, 0,1);
 
             if(i!=0){
-//                gp.setLayoutX(PREF_WIDTH); //Trasla tutti oltre lo schermo visibile
                 gp.setVisible(false);
             }
             gridPaneList.add(gp);
@@ -192,6 +203,11 @@ public class VisualizzatoreController implements Initializable {
             font = new Font("System Bold", 400);
         }
         return font;
+    }
+
+    private void setDimensioni(){
+        PREF_WIDTH = config.getDimensioni().get("pref_width");
+        PREF_HEIGHT = config.getDimensioni().get("pref_height");
     }
 
 }

@@ -5,11 +5,11 @@ import com.ar.visualizzatore.database.RecordDb;
 
 import java.util.List;
 
-public class GestoreDati {
+public class GestioneDati {
 
-    private DatiTotali datiLetti;
+    private DatiTotali datiLetti = new DatiTotali();
 
-    public GestoreDati() {}
+    public GestioneDati() {}
 
     public void avviaThreadLetturaDati(){
         Thread t = new Thread(()->{
@@ -32,7 +32,7 @@ public class GestoreDati {
     }
 
     private synchronized void elaboraDati(List<RecordDb> records) {
-        datiLetti = new DatiTotali();
+        datiLetti.svuotaCampi();
         for(RecordDb record : records){
             int qta = record.getQta();
             String tipo = record.getTipo();

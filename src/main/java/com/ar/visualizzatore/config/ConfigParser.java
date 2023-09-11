@@ -1,13 +1,13 @@
 package com.ar.visualizzatore.config;
 
-import com.ar.visualizzatore.dati.DatiStatistica;
-import com.ar.visualizzatore.dati.DurataSchermata;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ConfigParser {
 
@@ -16,7 +16,7 @@ public class ConfigParser {
     private static String json;
 
     public static Config getConfig() throws IOException {
-        return new Config(leggiStatistiche(), leggiDurata());
+        return new Config(leggiStatistiche(), leggiDimensioni(), leggiDurata());
     }
 
     private static List<DatiStatistica> leggiStatistiche() throws IOException {
@@ -37,6 +37,16 @@ public class ConfigParser {
             ));
         }
         return statistiche;
+    }
+
+    private static Map<String, Integer> leggiDimensioni() throws IOException {
+        if(json == null || json.isEmpty()) caricaJsonDaFile();
+        Map<String, Integer> dimensioni = new HashMap<>();
+        JSONObject obj = new JSONObject(json);
+        JSONObject objDimensioni = obj.getJSONObject("dimensioni");
+        dimensioni.put("pref_width",objDimensioni.getInt("pref_width"));
+        dimensioni.put("pref_height",objDimensioni.getInt("pref_height"));
+        return dimensioni;
     }
 
     private static DurataSchermata leggiDurata() throws IOException {

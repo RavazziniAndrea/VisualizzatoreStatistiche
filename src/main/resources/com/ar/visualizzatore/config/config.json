@@ -42,5 +42,9 @@
       "letto_db": true
     }
   ],
-  "durata_schermata_ms": 2000
+  "durata_schermata_ms": 1000,
+  "dimensioni": {
+    "pref_width": 1360,
+    "pref_height": 768
+  }
 }

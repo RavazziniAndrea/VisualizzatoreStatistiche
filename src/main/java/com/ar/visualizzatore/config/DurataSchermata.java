@@ -1,4 +1,4 @@
-package com.ar.visualizzatore.dati;
+package com.ar.visualizzatore.config;
 
 public class DurataSchermata {
     private int durata;
