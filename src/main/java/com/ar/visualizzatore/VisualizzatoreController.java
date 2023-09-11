@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.sql.Time;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -90,7 +91,11 @@ public class VisualizzatoreController implements Initializable {
                             Label lbl = (Label) scene.lookup("#"+PREFIX_LABEL_VALORE+datiStatistiche.get(i).getId());
                             Label lblTitolo = (Label) scene.lookup("#"+PREFIX_LABEL_TITOLO+datiStatistiche.get(i).getId());
 //                            lbl.setText(valori.get(i).getValue().toString());
-                            lbl.setText(valori.get(i).toString());
+                            if(valori.get(i) instanceof LocalTime){
+                                lbl.setText(((LocalTime) valori.get(i)).format(DateTimeFormatter.ISO_TIME));
+                            } else{
+                                lbl.setText(valori.get(i).toString());
+                            }
                             lbl.setTextFill(Color.rgb(colore.getR(),colore.getG(),colore.getB()));
                             lblTitolo.setTextFill(Color.rgb(colore.getR(),colore.getG(),colore.getB()));
                         }
