@@ -50,12 +50,6 @@ public class Dati { //TODO sarà da togliere
         valori.add(new Pair<>(datiStatistiche.get(2).getId(), bottiglieVino));
         valori.add(new Pair<>(datiStatistiche.get(3).getId(), drinkTotali));
         valori.add(new Pair<>(datiStatistiche.get(4).getId(), chiusuraCasse));
-
-//        valori.add(litriBevuti);
-//        valori.add(birreTotali);
-//        valori.add(bottiglieVino);
-//        valori.add(drinkTotali);
-//        valori.add(chiusuraCasse);
         return valori;
     }
 

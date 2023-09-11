@@ -22,6 +22,8 @@ public class DbConfig {
         Map<String, String> connectionConfig = new HashMap<>();
         JSONObject objConn = obj.getJSONObject("connessione");
         connectionConfig.put("ip", objConn.getString("ip"));
+        connectionConfig.put("port", objConn.getString("port"));
+        connectionConfig.put("table", objConn.getString("table"));
         connectionConfig.put("user", objConn.getString("user"));
         connectionConfig.put("passwd", objConn.getString("passwd"));
 
@@ -52,7 +54,7 @@ public class DbConfig {
 
     private static void caricaJsonDaFile() throws IOException {
         try {
-            json = new String(ConfigParser.class.getResourceAsStream(DATABASE_FILE_NAME).readAllBytes());
+            json = new String(DbConfig.class.getResourceAsStream(DATABASE_FILE_NAME).readAllBytes());
         } catch (NullPointerException e){
             e.printStackTrace();
             throw new IOException(e);

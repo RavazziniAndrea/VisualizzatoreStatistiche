@@ -1,25 +1,15 @@
 {
   "connessione":{
-    "ip": "10.0.54.42",
+    "ip": "10.0.54.11",
+    "port": "5432",
+    "table": "barboun",
     "user": "barboun",
-    "passwd": "barboun"
+    "passwd": "indecifrabile"
   },
   "query": [
     {
       "index": 0,
-      "statement": ""
-    },  {
-      "index": 1,
-      "statement": ""
-    },  {
-      "index": 2,
-      "statement": ""
-    },  {
-      "index": 3,
-      "statement": ""
-    },  {
-      "index": 4,
-      "statement": ""
+      "statement": "SELECT r.quantita AS qta, r.descrizione AS tipo, ord.data as data, ord.ora as ora FROM ordini ord JOIN righe r ON ord.id = r.id_ordine JOIN righe_articoli ra ON r.id = ra.id_riga WHERE ra.desc_tipologia = 'alcool' OR ra.desc_tipologia = 'super'"
     }
   ]
 }

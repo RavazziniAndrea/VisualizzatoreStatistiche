@@ -2,6 +2,8 @@ package com.ar.visualizzatore;
 
 import com.ar.visualizzatore.config.Config;
 import com.ar.visualizzatore.config.ConfigParser;
+import com.ar.visualizzatore.database.DbConfig;
+import com.ar.visualizzatore.database.GestioneDb;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

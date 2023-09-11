@@ -3,6 +3,7 @@ package com.ar.visualizzatore;
 import com.ar.visualizzatore.config.Config;
 import com.ar.visualizzatore.dati.Dati;
 import com.ar.visualizzatore.dati.DatiStatistica;
+import com.ar.visualizzatore.dati.GestoreDati;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
