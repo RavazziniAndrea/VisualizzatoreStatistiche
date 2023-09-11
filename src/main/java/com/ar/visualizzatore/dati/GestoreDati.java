@@ -2,15 +2,12 @@ package com.ar.visualizzatore.dati;
 
 import com.ar.visualizzatore.database.GestioneDb;
 import com.ar.visualizzatore.database.RecordDb;
-import com.ar.visualizzatore.dati.Dati;
 
-import java.time.Duration;
-import java.time.LocalTime;
 import java.util.List;
 
 public class GestoreDati {
 
-    private Dati datiLetti = new Dati();
+    private DatiTotali datiLetti;
 
     public GestoreDati() {}
 
@@ -19,13 +16,8 @@ public class GestoreDati {
             while(true){
 
                 List<RecordDb> records = GestioneDb.getRecordDbList();
-
-                datiLetti.setLitriBevuti(i);
-                datiLetti.setBirreTotali(i+10);
-                datiLetti.setDrinkTotali(i+13);
-                datiLetti.setBottiglieVino(i+16);
+                elaboraDati(records);
                 //datiLetti.setChiusuraCasse(LocalTime.ofSecondOfDay(Duration.between(datiLetti.getChiusuraCasse(), LocalTime.now()).toSeconds()));
-                System.out.println(datiLetti.getChiusuraCasse().toString());
 
 
                 try {
@@ -39,11 +31,41 @@ public class GestoreDati {
         t.start();
     }
 
-    public Dati getDatiLetti() {
+    private synchronized void elaboraDati(List<RecordDb> records) {
+        datiLetti = new DatiTotali();
+        for(RecordDb record : records){
+            int qta = record.getQta();
+            String tipo = record.getTipo();
+
+            switch (tipo.toLowerCase().split(" ")[0]) {
+                case "birra" -> {
+                    if (tipo.toLowerCase().contains("pong"))
+                        datiLetti.setLitriBevuti(datiLetti.getLitriBevuti() + (qta * VolumiBere.PONG_LITERS));
+                        //TODO aggiungere beerpong fatti anche se poi non dovessimo avere pc al beerpong
+                    else {
+                        datiLetti.setLitriBevuti(datiLetti.getLitriBevuti() + (qta * VolumiBere.BEER_LITERS));
+                        datiLetti.setBirreTotali(datiLetti.getBirreTotali() + qta);
+                    }
+                }
+                case "drink" -> {
+                    datiLetti.setLitriBevuti(datiLetti.getLitriBevuti() + (qta * VolumiBere.DRINK_LITERS));
+                    datiLetti.setDrinkTotali(datiLetti.getDrinkTotali() + qta);
+                }
+                case "lambrusco", "rosso", "bianco", "prosecco" -> {
+                    datiLetti.setLitriBevuti(datiLetti.getLitriBevuti() + (qta * VolumiBere.WINE_BOTTLE_LITERS));
+                    datiLetti.setBottiglieVino(datiLetti.getBottiglieVino() + qta);
+                }
+                case "amaro", "bicchiere" ->
+                        datiLetti.setLitriBevuti(datiLetti.getLitriBevuti() + (qta * VolumiBere.GLASS_LITERS));
+            }
+        }
+    }
+
+    public DatiTotali getDatiLetti() {
         return datiLetti;
     }
 
-    public void setDatiLetti(Dati datiLetti) {
+    public void setDatiLetti(DatiTotali datiLetti) {
         this.datiLetti = datiLetti;
     }
 }

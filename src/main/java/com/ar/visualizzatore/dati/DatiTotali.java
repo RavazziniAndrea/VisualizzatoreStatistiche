@@ -7,32 +7,31 @@ import javafx.util.Pair;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
-public class Dati { //TODO sarà da togliere
-    private Integer litriBevuti;
+public class DatiTotali {
+    private Double litriBevuti;
     private Integer birreTotali;
     private Integer drinkTotali;
     private Integer bottiglieVino;
     private LocalTime chiusuraCasse;
 
-    public Dati() {
-        this.litriBevuti = 0;
+    public DatiTotali() {
+        this.litriBevuti = 0.0;
         this.birreTotali = 0;
         this.bottiglieVino = 0;
         this.drinkTotali = 0;
         this.chiusuraCasse = LocalTime.of(1,30,0);
     }
 
-    public Dati(int litriBevuti, int birreTotali, int drinkTotali, int bottiglieVino) {
+    public DatiTotali(double litriBevuti, int birreTotali, int drinkTotali, int bottiglieVino) {
         this.litriBevuti = litriBevuti;
         this.birreTotali = birreTotali;
         this.drinkTotali = drinkTotali;
         this.bottiglieVino = bottiglieVino;
     }
 
-    public Dati(int litriBevuti, int birreTotali, int drinkTotali, int bottiglieVino, LocalTime chiusuraCasse) {
+    public DatiTotali(double litriBevuti, int birreTotali, int drinkTotali, int bottiglieVino, LocalTime chiusuraCasse) {
         this.litriBevuti = litriBevuti;
         this.birreTotali = birreTotali;
         this.drinkTotali = drinkTotali;
@@ -45,7 +44,7 @@ public class Dati { //TODO sarà da togliere
         List<DatiStatistica> datiStatistiche = config.getDatiStatistiche();
         List<Pair<String, Object>> valori = new ArrayList<>();
 
-        valori.add(new Pair<>(datiStatistiche.get(0).getId(), litriBevuti));
+        valori.add(new Pair<>(datiStatistiche.get(0).getId(), litriBevuti.intValue()));
         valori.add(new Pair<>(datiStatistiche.get(1).getId(), birreTotali));
         valori.add(new Pair<>(datiStatistiche.get(2).getId(), bottiglieVino));
         valori.add(new Pair<>(datiStatistiche.get(3).getId(), drinkTotali));
@@ -53,11 +52,14 @@ public class Dati { //TODO sarà da togliere
         return valori;
     }
 
-    public int getLitriBevuti() {
+    public Double getLitriBevuti() {
         return litriBevuti;
     }
+    public int getLitriBevutiInt() {
+        return litriBevuti.intValue();
+    }
 
-    public void setLitriBevuti(int litriBevuti) {
+    public void setLitriBevuti(double litriBevuti) {
         this.litriBevuti = litriBevuti;
     }
 
@@ -97,7 +99,7 @@ public class Dati { //TODO sarà da togliere
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Dati that = (Dati) o;
+        DatiTotali that = (DatiTotali) o;
         return litriBevuti == that.litriBevuti && birreTotali == that.birreTotali && drinkTotali == that.drinkTotali && bottiglieVino == that.bottiglieVino && Objects.equals(chiusuraCasse, that.chiusuraCasse);
     }
 

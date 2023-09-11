@@ -7,14 +7,16 @@ public class DatiStatistica {
     private String testo;
     private String tipo;
     private int fontSize;
+    private int fontSizeValore;
     private boolean lettoDb;
 
-    public DatiStatistica(int index, String id, String testo, String tipo, int fontSize, boolean lettoDb) {
+    public DatiStatistica(int index, String id, String testo, String tipo, int fontSize, int fontSizeValore, boolean lettoDb) {
         this.index = index;
         this.id = id;
         this.testo = testo;
         this.tipo = tipo;
         this.fontSize = fontSize;
+        this.fontSizeValore = fontSizeValore;
         this.lettoDb = lettoDb;
     }
 
@@ -56,6 +58,14 @@ public class DatiStatistica {
 
     public void setFontSize(int fontSize) {
         this.fontSize = fontSize;
+    }
+
+    public int getFontSizeValore() {
+        return fontSizeValore;
+    }
+
+    public void setFontSizeValore(int fontSizeValore) {
+        this.fontSizeValore = fontSizeValore;
     }
 
     public boolean isLettoDb() {

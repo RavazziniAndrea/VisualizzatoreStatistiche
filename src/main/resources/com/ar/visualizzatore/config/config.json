@@ -3,39 +3,44 @@
     {
       "index": 0,
       "id": "LitriBevuti",
-      "testo": "Litri bevuti",
+      "testo": "LITRI BEVUTI",
       "tipo": "Integer",
       "font_size": 230,
+      "font_size_valore": 300,
       "letto_db": true
     },  {
       "index": 1,
       "id": "BirreTotali",
-      "testo": "Birre totali",
+      "testo": "BIRRE TOTALI",
       "tipo": "Integer",
       "font_size": 230,
+      "font_size_valore": 300,
       "letto_db": true
     },  {
       "index": 2,
       "id": "BottiglieVino",
-      "testo": "Bottiglie vino",
+      "testo": "BOTTIGLIE VINO",
       "tipo": "Integer",
       "font_size": 190,
+      "font_size_valore": 300,
       "letto_db": true
     },  {
       "index": 3,
       "id": "DrinkTotali",
-      "testo": "Drink totali",
+      "testo": "DRINK TOTALI",
       "tipo": "Integer",
       "font_size": 230,
+      "font_size_valore": 300,
       "letto_db": true
     },  {
       "index": 4,
       "id": "ChiusuraCasse",
-      "testo": "Chiusura casse",
+      "testo": "CHIUSURA CASSE",
       "tipo": "Long",
       "font_size": 170,
+      "font_size_valore": 300,
       "letto_db": true
     }
   ],
-  "durata_schermata_ms": 7000
+  "durata_schermata_ms": 2000
 }

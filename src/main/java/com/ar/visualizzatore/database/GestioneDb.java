@@ -1,11 +1,7 @@
 package com.ar.visualizzatore.database;
 
-import com.ar.visualizzatore.config.ConfigParser;
-import com.ar.visualizzatore.dati.DatiStatistica;
-import com.ar.visualizzatore.dati.QtaBere;
+import com.ar.visualizzatore.dati.VolumiBere;
 import javafx.util.Pair;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.sql.*;
@@ -17,7 +13,6 @@ import java.util.Map;
 
 public class GestioneDb {
 
-    private Map<String, String> connMap;
     private static List<Pair<Integer, String>> queryList;
 
     public static List<RecordDb> getRecordDbList(){
@@ -29,7 +24,7 @@ public class GestioneDb {
         try(Connection c = getConnessione()) {
             for(Pair<Integer, String> p : queryList){ //Che in realtà la query è solo una
                 try(ResultSet rs = c.createStatement().executeQuery(String.valueOf(p.getValue()))){
-                    QtaBere qtaBere = new QtaBere();
+                    VolumiBere qtaBere = new VolumiBere();
                     while(rs.next()){
                         int qta = rs.getInt("qta");
                         String tipo = rs.getString("tipo");

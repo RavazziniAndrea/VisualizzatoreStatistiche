@@ -1,7 +1,7 @@
 package com.ar.visualizzatore;
 
 import com.ar.visualizzatore.config.Config;
-import com.ar.visualizzatore.dati.Dati;
+import com.ar.visualizzatore.dati.DatiTotali;
 import com.ar.visualizzatore.dati.DatiStatistica;
 import com.ar.visualizzatore.dati.GestoreDati;
 import javafx.application.Platform;
@@ -12,6 +12,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.util.Pair;
 
 import java.io.InputStream;
@@ -56,14 +58,14 @@ public class VisualizzatoreController implements Initializable {
     }
 
     private void avviaCambioValori(Scene scene) {
-        Dati datiVisualizzati = new Dati();
+        DatiTotali datiVisualizzati = new DatiTotali();
         GestoreDati gestoreDati = new GestoreDati();
         gestoreDati.avviaThreadLetturaDati();
         Thread t = new Thread(()->{
             while(true){
-                Dati datiLetti = gestoreDati.getDatiLetti();
-                if(!datiVisualizzati.equals(datiLetti)){
-                    datiVisualizzati.setLitriBevuti(datiLetti.getLitriBevuti());
+                DatiTotali datiLetti = gestoreDati.getDatiLetti();
+                if(datiLetti != null && !datiVisualizzati.equals(datiLetti)){
+                    datiVisualizzati.setLitriBevuti(datiLetti.getLitriBevutiInt());
                     datiVisualizzati.setBirreTotali(datiLetti.getBirreTotali());
                     datiVisualizzati.setBottiglieVino(datiLetti.getBottiglieVino());
                     datiVisualizzati.setDrinkTotali(datiLetti.getDrinkTotali());
@@ -170,17 +172,18 @@ public class VisualizzatoreController implements Initializable {
         Label lbl = new Label();
         lbl.setId(PREFIX_LABEL_VALORE+datiStatistica.getId());
         lbl.setAlignment(Pos.CENTER);
-        lbl.setFont(getFont7Segmenti());
+        lbl.setFont(getFont7Segmenti(datiStatistica.getFontSizeValore()));
         lbl.setText("---");
         return lbl;
     }
 
 
     private Font getFontTitolo(int fontSize) {
-        Font font = new Font("System Bold", fontSize);
+//        Font font = new Font("System Bold", fontSize);
+        Font font = new Font("Monospaced Bold", fontSize);
         return font;
     }
-    private Font getFont7Segmenti() {
+    private Font getFont7Segmenti(int fonSize) {
 
         InputStream is = VisualizzatoreController.class.getResourceAsStream(FONT_PATH);
         Font font = Font.loadFont(is, 300);

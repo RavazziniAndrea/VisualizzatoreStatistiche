@@ -32,6 +32,7 @@ public class ConfigParser {
                     objStatistica.getString("testo"),
                     objStatistica.getString("tipo"),
                     objStatistica.getInt("font_size"),
+                    objStatistica.getInt("font_size_valore"),
                     objStatistica.getBoolean("letto_db")
             ));
         }
