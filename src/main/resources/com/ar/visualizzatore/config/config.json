@@ -11,7 +11,7 @@
     },  {
       "index": 1,
       "id": "BirreTotali",
-      "testo": "BIRRE TOTALI",
+      "testo": "BIRRE",
       "tipo": "Integer",
       "font_size": 230,
       "font_size_valore": 300,
@@ -27,9 +27,9 @@
     },  {
       "index": 3,
       "id": "DrinkTotali",
-      "testo": "DRINK TOTALI",
+      "testo": "DRINK",
       "tipo": "Integer",
-      "font_size": 230,
+      "font_size": 300,
       "font_size_valore": 300,
       "letto_db": true
     },  {
@@ -38,13 +38,33 @@
       "testo": "CHIUSURA CASSE",
       "tipo": "Long",
       "font_size": 170,
-      "font_size_valore": 200,
+      "font_size_valore": 250,
       "letto_db": false,
       "valore": "02:29:01"
+    }, {
+      "index": 5,
+      "id": "Litri2022",
+      "testo": "LITRI 2022",
+      "tipo": "Integer",
+      "font_size": 250,
+      "font_size_valore": 300,
+      "letto_db": false,
+      "valore": "3062"
+    }, {
+      "index": 6,
+      "id": "GiorniNatale",
+      "testo": "GIORNI A NATALE",
+      "tipo": "String",
+      "font_size": 200,
+      "font_size_valore": 300,
+      "letto_db": false,
+      "valore": "-"
     }
   ],
   "durata_schermata_ms": 3000,
   "dimensioni": {
+    "pref_width_old": 1920,
+    "pref_height_old": 1080,
     "pref_width": 1360,
     "pref_height": 768
   }

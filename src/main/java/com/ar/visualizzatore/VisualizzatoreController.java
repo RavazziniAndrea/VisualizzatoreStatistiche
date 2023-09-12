@@ -1,5 +1,6 @@
 package com.ar.visualizzatore;
 
+import Exceptions.CampiNonUguali;
 import com.ar.visualizzatore.config.Config;
 import com.ar.visualizzatore.dati.DatiTotali;
 import com.ar.visualizzatore.config.DatiStatistica;
@@ -78,28 +79,34 @@ public class VisualizzatoreController implements Initializable {
                     datiVisualizzati.setBirreTotali(datiLetti.getBirreTotali());
                     datiVisualizzati.setBottiglieVino(datiLetti.getBottiglieVino());
                     datiVisualizzati.setDrinkTotali(datiLetti.getDrinkTotali());
-                    //TODO allora.. per rendere l'idea del countdown deve lampeggiare i : e aggiornarsi al secondo
                     datiVisualizzati.setChiusuraCasse(contaTempoRimanente(datiLetti.getChiusuraCasse()));
-//                    contaTempoRimanente(datiLetti.getChiusuraCasse());
+                    datiVisualizzati.setGiorniNatale(datiLetti.getGiorniNatale());
 
-                    Map<Integer, Object> valori = datiVisualizzati.getMappaValori();
-
-                    Platform.runLater(()->{
-                        List<DatiStatistica> datiStatistiche = config.getDatiStatistiche();
-                        colore.cambiaColore();
-                        for(int i=0;i<datiStatistiche.size();i++){
-                            Label lbl = (Label) scene.lookup("#"+PREFIX_LABEL_VALORE+datiStatistiche.get(i).getId());
-                            Label lblTitolo = (Label) scene.lookup("#"+PREFIX_LABEL_TITOLO+datiStatistiche.get(i).getId());
-//                            lbl.setText(valori.get(i).getValue().toString());
-                            if(valori.get(i) instanceof LocalTime){
-                                lbl.setText(((LocalTime) valori.get(i)).format(DateTimeFormatter.ISO_TIME));
-                            } else{
-                                lbl.setText(valori.get(i).toString());
+                    try {
+                        Map<Integer, Object> valori = datiVisualizzati.getMappaValori();
+                        Platform.runLater(()->{
+                            List<DatiStatistica> datiStatistiche = config.getDatiStatistiche();
+                            colore.cambiaColore();
+                            for(int i=0;i<datiStatistiche.size();i++){
+                                if(valori.get(i) == null){
+                                    System.err.println("Mappa con un valore null");
+                                    System.exit(1);
+                                }
+                                Label lbl = (Label) scene.lookup("#"+PREFIX_LABEL_VALORE+datiStatistiche.get(i).getId());
+                                Label lblTitolo = (Label) scene.lookup("#"+PREFIX_LABEL_TITOLO+datiStatistiche.get(i).getId());
+    //                            lbl.setText(valori.get(i).getValue().toString());
+                                if(valori.get(i) instanceof LocalTime){
+                                    lbl.setText(((LocalTime) valori.get(i)).format(DateTimeFormatter.ISO_TIME));
+                                } else{
+                                    lbl.setText(valori.get(i).toString());
+                                }
+                                lbl.setTextFill(Color.rgb(colore.getR(),colore.getG(),colore.getB()));
+                                lblTitolo.setTextFill(Color.rgb(colore.getR(),colore.getG(),colore.getB()));
                             }
-                            lbl.setTextFill(Color.rgb(colore.getR(),colore.getG(),colore.getB()));
-                            lblTitolo.setTextFill(Color.rgb(colore.getR(),colore.getG(),colore.getB()));
-                        }
-                    });
+                        });
+                    } catch (CampiNonUguali e) {
+                        throw new RuntimeException(e);
+                    }
                 }
                 try {
                     Thread.sleep(1000);
@@ -113,11 +120,16 @@ public class VisualizzatoreController implements Initializable {
     }
 
     private LocalTime contaTempoRimanente(LocalTime chiusuraCasse) { //TODO non si può vedere sto metodo, refactor
-        int secondi = (int) (LocalTime.now().until(chiusuraCasse, ChronoUnit.SECONDS) % 60);
-        int minuti = (int) (LocalTime.now().until(chiusuraCasse, ChronoUnit.SECONDS) / 60);
-        int ore = (int) minuti/60;
-        minuti = minuti % 60;
+        if(chiusuraCasse == null) return LocalTime.MIDNIGHT;
+        LocalTime mezzanotte = LocalTime.of(23,59,59);
+        int secondiDopoMezzanotte = (int) (LocalTime.MIDNIGHT.until(chiusuraCasse, ChronoUnit.SECONDS));
+        int secondiTotali = (int) (LocalTime.now().until(mezzanotte, ChronoUnit.SECONDS))+ secondiDopoMezzanotte;
+
+        int secondi = secondiTotali % 60;
+        int minuti = secondiTotali / 60 % 60;
+        int ore = secondiTotali / 3600 % 60;
         return LocalTime.of(ore, minuti, secondi);
+//        return LocalTime.now();
     }
 
     private void avviaCambioSchermate(int durata, Scene scene) {

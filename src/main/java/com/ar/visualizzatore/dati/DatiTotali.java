@@ -1,11 +1,13 @@
 package com.ar.visualizzatore.dati;
 
+import Exceptions.CampiNonUguali;
 import com.ar.visualizzatore.VisualizzatoreStatistiche;
 import com.ar.visualizzatore.config.Config;
 import com.ar.visualizzatore.config.DatiStatistica;
 import javafx.util.Pair;
 
 import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 
@@ -15,44 +17,46 @@ public class DatiTotali {
     private Integer drinkTotali;
     private Integer bottiglieVino;
     private LocalTime chiusuraCasse;
+    private Integer litri2022;
+    private Integer giorniNatale;
 
     public DatiTotali() {
         this.litriBevuti = 0.0;
         this.birreTotali = 0;
         this.bottiglieVino = 0;
         this.drinkTotali = 0;
-        this.chiusuraCasse = LocalTime.parse(NonLettiDb.getNonLettiDbMap().get("ChiusuraCasse").toString());
+        this.chiusuraCasse = (NonLettiDb.getNonLettiDbMap().get("ChiusuraCasse") == null)
+                ? null
+                : LocalTime.parse(NonLettiDb.getNonLettiDbMap().get("ChiusuraCasse").toString());
+        this.litri2022 = (NonLettiDb.getNonLettiDbMap().get("Litri2022") == null)
+                ? null
+                : Integer.parseInt((String) NonLettiDb.getNonLettiDbMap().get("Litri2022"));
+        this.giorniNatale = (NonLettiDb.getNonLettiDbMap().get("GiorniNatale") == null)
+                ? null
+                : calcolaGiorniNatale();
     }
 
-    public DatiTotali(double litriBevuti, int birreTotali, int drinkTotali, int bottiglieVino) {
-        this.litriBevuti = litriBevuti;
-        this.birreTotali = birreTotali;
-        this.drinkTotali = drinkTotali;
-        this.bottiglieVino = bottiglieVino;
-    }
-
-    public DatiTotali(double litriBevuti, int birreTotali, int drinkTotali, int bottiglieVino, LocalTime chiusuraCasse) {
-        this.litriBevuti = litriBevuti;
-        this.birreTotali = birreTotali;
-        this.drinkTotali = drinkTotali;
-        this.bottiglieVino = bottiglieVino;
-        this.chiusuraCasse = chiusuraCasse;
-    }
 
     /* TODO!!!!!!!!!
     * Ogni volta che si aggiunge un campo, va messo anche nella mappa!!!!!
     * */
-    private Map<String, Object> getMappaCampi(){
+    private Map<String, Object> getMappaCampi() throws CampiNonUguali {
         Map<String, Object> campiClasse = new HashMap<>();
         campiClasse.put("LitriBevuti", litriBevuti.intValue());
         campiClasse.put("BirreTotali", birreTotali);
         campiClasse.put("BottiglieVino", bottiglieVino);
         campiClasse.put("DrinkTotali", drinkTotali);
         campiClasse.put("ChiusuraCasse", chiusuraCasse);
+        campiClasse.put("Litri2022", litri2022);
+        campiClasse.put("GiorniNatale", giorniNatale);
+
+        Field[] campi = DatiTotali.class.getDeclaredFields();
+        if(campi.length != campiClasse.size()) throw new CampiNonUguali("Campi non inseriti nella mappa");
+
         return campiClasse;
     }
 
-    public Map<Integer, Object> getMappaValori() {
+    public Map<Integer, Object> getMappaValori() throws CampiNonUguali {
         Config config = VisualizzatoreStatistiche.getConfig();
         List<DatiStatistica> datiStatistiche = config.getDatiStatistiche();
 
@@ -63,18 +67,13 @@ public class DatiTotali {
         }
         return val;
     }
-//    public List<Pair<String, Object>> getListaValoriOrdinati(){
-//        Config config = VisualizzatoreStatistiche.getConfig();
-//        List<DatiStatistica> datiStatistiche = config.getDatiStatistiche();
-//        List<Pair<String, Object>> valori = new ArrayList<>();
-//
-//        valori.add(new Pair<>(datiStatistiche.get(0).getId(), litriBevuti.intValue()));
-//        valori.add(new Pair<>(datiStatistiche.get(1).getId(), birreTotali));
-//        valori.add(new Pair<>(datiStatistiche.get(2).getId(), bottiglieVino));
-//        valori.add(new Pair<>(datiStatistiche.get(3).getId(), drinkTotali));
-//        valori.add(new Pair<>(datiStatistiche.get(4).getId(), chiusuraCasse));
-//        return valori;
-//    }
+
+
+    private Integer calcolaGiorniNatale() {
+        LocalDate natale = LocalDate.of(2023, 12, 25);
+        int giornoAnnoNatale = natale.getDayOfYear();
+        return giornoAnnoNatale - LocalDate.now().getDayOfYear() - 1;
+    }
 
     public Double getLitriBevuti() {
         return litriBevuti;
@@ -117,6 +116,22 @@ public class DatiTotali {
 
     public void setChiusuraCasse(LocalTime chiusuraCasse) {
         this.chiusuraCasse = chiusuraCasse;
+    }
+
+    public Integer getLitri2022() {
+        return litri2022;
+    }
+
+    public void setLitri2022(Integer litri2022) {
+        this.litri2022 = litri2022;
+    }
+
+    public Integer getGiorniNatale() {
+        return giorniNatale;
+    }
+
+    public void setGiorniNatale(Integer giorniNatale) {
+        this.giorniNatale = giorniNatale;
     }
 
     @Override
